@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mock‑Prep Masterplan • 17 Oct – 21 Nov 2025</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#121821; --muted:#99a3b3; --text:#e6eefc; --accent:#6ea8fe;
+      --card:#0f141c; --ok:#5bd17f; --warn:#ffd166; --danger:#ff6b6b; --grid:#1c2531;
+      --subject-bio:#8bd3dd; --subject-bus:#b39ddb; --subject-chem:#ffadad; --subject-cs:#80cbc4;
+      --subject-dt:#ffd6a5; --subject-eng:#a0c4ff; --subject-fr:#caffbf; --subject-maths:#fdffb6;
+      --subject-phys:#bdb2ff; --subject-rs:#ffc6ff
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b0f14,#0a0d12);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    header{position:sticky;top:0;z-index:5;background:rgba(10,13,18,.7);backdrop-filter:blur(8px);border-bottom:1px solid #1e2632}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    h1{margin:4px 0 2px;font-size:28px}
+    .sub{color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button,.pill{background:var(--panel);border:1px solid #243041;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    button:hover{border-color:var(--accent)}
+    .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--card);border:1px solid #1e2632}
+    .dot{width:10px;height:10px;border-radius:50%}
+
+    main{padding:24px 0}
+    .week{margin:18px 0}
+    .week h2{font-size:20px;margin:0 0 8px}
+    .quote{color:var(--muted);font-style:italic;margin-bottom:14px}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+    .day{background:var(--card);border:1px solid var(--grid);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+    .day .head{display:flex;justify-content:space-between;align-items:center}
+    .date{font-weight:700}
+    .time{color:var(--muted);font-size:13px}
+    .slots{display:grid;gap:6px}
+    .slot{display:flex;gap:8px;align-items:center;background:#0c1219;border:1px dashed #223044;padding:8px;border-radius:10px}
+    .slot input[type="checkbox"]{width:18px;height:18px}
+    .slot .when{font-weight:600;color:#cfe1ff;width:94px}
+    .slot .subject{flex:1}
+    .subject .s{padding:2px 8px;border-radius:999px;border:1px solid #213046;white-space:nowrap;font-size:13px}
+
+    .exam-board{margin-top:26px}
+    table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid #253246;border-radius:12px;overflow:hidden}
+    th,td{padding:10px;border-bottom:1px solid #1f2836;text-align:left}
+    th{background:#0e1520;font-weight:700}
+    tr:last-child td{border-bottom:none}
+    .exam{background:linear-gradient(90deg,#0e1520,transparent)}
+
+    .helpers{margin-top:16px;color:var(--muted);font-size:14px}
+    .muted{color:var(--muted)}
+    .print-note{margin-top:8px}
+    .quote-inline{font-style:italic}
+
+    @media print{
+      header{position:static;background:none;border:none}
+      .controls{display:none}
+      body{background:white;color:black}
+      .day,.week .quote,table,.tag{break-inside:avoid}
+    }
+    .countdown{margin-top:10px;font-size:22px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+  .countdown .num{font-size:28px;padding:2px 8px;border-radius:8px;background:var(--panel);border:1px solid #243041;margin:0 3px}
+  .countdown .label{color:var(--muted);font-weight:500;margin-right:10px}
+
+  /* ---- FIT SUBJECT CHIPS INSIDE SLOTS ---- */
+  .slots{display:grid;gap:6px}
+  .slot{display:flex;gap:8px;align-items:center;background:#0c1219;border:1px dashed #223044;padding:8px;border-radius:10px;min-height:42px}
+  .slot .when{font-weight:600;color:#cfe1ff;width:92px;flex:0 0 92px}
+  .subject{flex:1;min-width:0}
+  .subject .s{display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 8px;border-radius:999px;border:1px solid #213046;vertical-align:middle}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>🌅 Mock‑Prep Masterplan</h1>
+      <div class="sub">17 October – 21 November 2025 • UK (Europe/London)</div>
+      <div class="controls">
+        <button id="save">💾 Save Progress</button>
+        <button id="clear">♻️ Clear Ticks</button>
+        <button onclick="window.print()">🖨️ Print</button>
+        <span class="pill">Tip: Click a subject label to edit text/times.</span>
+      </div>
+      <div id="countdown" class="countdown" aria-live="polite">
+        <span class="label">Countdown to first exam:</span>
+        <span class="num" id="cd-days">0</span>d
+        <span class="num" id="cd-hours">00</span>h
+        <span class="num" id="cd-mins">00</span>m
+        <span class="num" id="cd-secs">00</span>s
+      </div>
+      <div class="legend">
+        <span class="tag"><span class="dot" style="background:var(--subject-bio)"></span>🧬 Biology</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-bus)"></span>💼 Business</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-chem)"></span>⚗️ Chemistry</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-cs)"></span>💻 Computer Sci</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-dt)"></span>⚙️ DT</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-eng)"></span>✍️ Eng Lang</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-fr)"></span>🇫🇷 French</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-maths)"></span>🧠 Maths</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-phys)"></span>🔭 Physics</span>
+        <span class="tag"><span class="dot" style="background:var(--subject-rs)"></span>☯️ RS</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="helpers">Each day targets ≈ <b>3 hours</b> total. Suggested slots: <span class="quote-inline">15:45–16:45</span>, <span class="quote-inline">17:00–18:00</span>, <span class="quote-inline">18:15–19:15</span>. Adjust to suit. Tick as you complete; progress is saved locally on your device.</p>
+
+    <!-- Week 1 -->
+    <section class="week">
+      <h2>Week 1 — Foundation & Focus (Thu 17 – Sun 20 Oct)</h2>
+      <div class="quote">“Each hour now is one less panic later.”</div>
+      <div class="grid">
+        <!-- Thu 17 -->
+        <article class="day" data-day="2025-10-17">
+          <div class="head"><span class="date">Thu 17 Oct</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-bio)20;border-color:#2a3a4f" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-maths)20;border-color:#2a3a4f" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-eng)20;border-color:#2a3a4f" contenteditable>✍️ English Lang</span></span></label>
+          </div>
+        </article>
+        <!-- Fri 18 -->
+        <article class="day" data-day="2025-10-18">
+          <div class="head"><span class="date">Fri 18 Oct</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-chem)20;border-color:#2a3a4f" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-phys)20;border-color:#2a3a4f" contenteditable>🔭 Physics</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-eng)20;border-color:#2a3a4f" contenteditable>✍️ English Lang</span></span></label>
+          </div>
+        </article>
+        <!-- Sat 19 -->
+        <article class="day" data-day="2025-10-19">
+          <div class="head"><span class="date">Sat 19 Oct</span><span class="time">~3–4h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:00–11:00</span><span class="subject"><span class="s" style="background:var(--subject-bus)20;border-color:#2a3a4f" contenteditable>💼 Business</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:15–12:15</span><span class="subject"><span class="s" style="background:var(--subject-maths)20;border-color:#2a3a4f" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>13:00–14:00</span><span class="subject"><span class="s" style="background:var(--subject-bio)20;border-color:#2a3a4f" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>14:15–14:35</span><span class="subject"><span class="s" style="background:var(--subject-fr)20;border-color:#2a3a4f" contenteditable>🇫🇷 French (Quick Review)</span></span></label>
+          </div>
+        </article>
+        <!-- Sun 20 -->
+        <article class="day" data-day="2025-10-20">
+          <div class="head"><span class="date">Sun 20 Oct</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:30–11:30</span><span class="subject"><span class="s" style="background:var(--subject-phys)20;border-color:#2a3a4f" contenteditable>🔭 Physics</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:45–12:45</span><span class="subject"><span class="s" style="background:var(--subject-chem)20;border-color:#2a3a4f" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>13:30–14:30</span><span class="subject"><span class="s" style="background:var(--subject-eng)20;border-color:#2a3a4f" contenteditable>✍️ English Lang</span></span></label>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Week 2 -->
+    <section class="week">
+      <h2>Week 2 — Momentum & Memory (Mon 21 – Sun 27 Oct)</h2>
+      <div class="quote">“Tiny progress, repeated daily, becomes unstoppable momentum.”</div>
+      <div class="grid">
+        <article class="day" data-day="2025-10-21"><div class="head"><span class="date">Mon 21</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-cs)20" contenteditable>💻 Computer Sci</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-22"><div class="head"><span class="date">Tue 22</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-rs)20" contenteditable>☯️ RS</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-fr)20" contenteditable>🇫🇷 French</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-chem)20" contenteditable>⚗️ Chemistry</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-23"><div class="head"><span class="date">Wed 23</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-dt)20" contenteditable>⚙️ DT</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-phys)20" contenteditable>🔭 Physics</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-24"><div class="head"><span class="date">Thu 24</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>16:00–17:00</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths Paper 1</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:15–18:15</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:30–19:30</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-25"><div class="head"><span class="date">Fri 25</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-chem)20" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-bus)20" contenteditable>💼 Business</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-phys)20" contenteditable>🔭 Physics</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-26"><div class="head"><span class="date">Sat 26</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:00–11:00</span><span class="subject"><span class="s" style="background:var(--subject-cs)20" contenteditable>💻 Computer Sci</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:15–12:15</span><span class="subject"><span class="s" style="background:var(--subject-fr)20" contenteditable>🇫🇷 French</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>12:30–13:30</span><span class="subject"><span class="s" style="background:var(--subject-rs)20" contenteditable>☯️ RS</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-27"><div class="head"><span class="date">Sun 27</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:30–11:30</span><span class="subject"><span class="s" style="background:var(--subject-dt)20" contenteditable>⚙️ DT</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:45–12:45</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>13:30–14:30</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+      </div>
+    </section>
+
+    <!-- Week 3 -->
+    <section class="week">
+      <h2>Week 3 — Practice & Pressure (Mon 28 Oct – Sun 3 Nov)</h2>
+      <div class="quote">“You don’t rise to the occasion—you fall to the level of your preparation.”</div>
+      <div class="grid">
+        <article class="day" data-day="2025-10-28"><div class="head"><span class="date">Mon 28</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-chem)20" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-phys)20" contenteditable>🔭 Physics</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-29"><div class="head"><span class="date">Tue 29</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-cs)20" contenteditable>💻 Computer Sci</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-bus)20" contenteditable>💼 Business</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-30"><div class="head"><span class="date">Wed 30</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-fr)20" contenteditable>🇫🇷 French</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-rs)20" contenteditable>☯️ RS</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-10-31"><div class="head"><span class="date">Thu 31</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>16:00–17:00</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:15–18:15</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:30–19:30</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-01"><div class="head"><span class="date">Fri 1 Nov</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-chem)20" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-phys)20" contenteditable>🔭 Physics</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-bus)20" contenteditable>💼 Business</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-02"><div class="head"><span class="date">Sat 2</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:00–11:00</span><span class="subject"><span class="s" style="background:var(--subject-cs)20" contenteditable>💻 Computer Sci</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:15–12:15</span><span class="subject"><span class="s" style="background:var(--subject-rs)20" contenteditable>☯️ RS</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>12:30–13:30</span><span class="subject"><span class="s" style="background:var(--subject-fr)20" contenteditable>🇫🇷 French</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-03"><div class="head"><span class="date">Sun 3</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:30–11:30</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:45–12:45</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>13:30–14:30</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ English Lang</span></span></label>
+          </div></article>
+      </div>
+    </section>
+
+    <!-- Week 4 -->
+    <section class="week">
+      <h2>Week 4 — Polish & Power (Mon 4 – Sat 9 Nov)</h2>
+      <div class="quote">“Stay calm. You’ve already done the hard part: starting.”</div>
+      <div class="grid">
+        <article class="day" data-day="2025-11-04"><div class="head"><span class="date">Mon 4</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-chem)20" contenteditable>⚗️ Chemistry</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-phys)20" contenteditable>🔭 Physics</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-dt)20" contenteditable>⚙️ DT</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-05"><div class="head"><span class="date">Tue 5</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-cs)20" contenteditable>💻 Computer Sci</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-bus)20" contenteditable>💼 Business</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-fr)20" contenteditable>🇫🇷 French</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-06"><div class="head"><span class="date">Wed 6</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>15:45–16:45</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:00–18:00</span><span class="subject"><span class="s" style="background:var(--subject-rs)20" contenteditable>☯️ RS</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:15–19:15</span><span class="subject"><span class="s" style="background:var(--subject-bio)20" contenteditable>🧬 Biology</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-07"><div class="head"><span class="date">Thu 7</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>16:00–17:00</span><span class="subject"><span class="s" contenteditable>Weak Area 1</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:15–18:15</span><span class="subject"><span class="s" contenteditable>Weak Area 2</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:30–19:30</span><span class="subject"><span class="s" contenteditable>Weak Area 3</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-08"><div class="head"><span class="date">Fri 8</span><span class="time">~3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>16:00–17:00</span><span class="subject"><span class="s" style="background:var(--subject-eng)20" contenteditable>✍️ Eng Lang (Timing)</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>17:15–18:15</span><span class="subject"><span class="s" style="background:var(--subject-maths)20" contenteditable>🧠 Maths (Timing)</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>18:30–19:30</span><span class="subject"><span class="s" contenteditable>Science Paper Drill</span></span></label>
+          </div></article>
+        <article class="day" data-day="2025-11-09"><div class="head"><span class="date">Sat 9</span><span class="time">~2–3h</span></div>
+          <div class="slots">
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>10:30–11:00</span><span class="subject"><span class="s" contenteditable>All Subjects – Flash Cards</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>11:15–11:45</span><span class="subject"><span class="s" contenteditable>Equations & Quotes</span></span></label>
+            <label class="slot"><input type="checkbox"><span class="when" contenteditable>12:00–12:30</span><span class="subject"><span class="s" contenteditable>Plan Exam Morning</span></span></label>
+          </div></article>
+      </div>
+    </section>
+
+    <!-- Exam Week(s) -->
+    <section class="exam-board">
+      <h2>🎓 Mock Exam Timetable (10 – 21 Nov 2025)</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Time</th><th>Duration</th><th>Subject</th><th>Paper</th><th>After‑Exam Suggestion</th></tr></thead>
+        <tbody>
+          <tr class="exam"><td>Mon 10 Nov</td><td>09:05</td><td>1h 20m</td><td>☯️ RS</td><td>KS4 Mock RS</td><td>30m reflection · Light Eng Lang read</td></tr>
+          <tr class="exam"><td>Tue 11 Nov</td><td>09:05</td><td>2h 05m</td><td>✍️ Eng Lang</td><td>Paper 1</td><td>Rest · 45m Maths (methods)</td></tr>
+          <tr class="exam"><td>Tue 11 Nov</td><td>13:15</td><td>1h 30m</td><td>💼 Business</td><td>Paper 1</td><td>Early night</td></tr>
+          <tr class="exam"><td>Wed 12 Nov</td><td>09:05</td><td>1h 20m</td><td>🇫🇷 French</td><td>Reading & Listening</td><td>45m Bio quick recall</td></tr>
+          <tr class="exam"><td>Wed 12 Nov</td><td>13:15</td><td>1h 30m</td><td>🧠 Maths</td><td>Paper 1</td><td>Hydrate · 20m walk</td></tr>
+          <tr class="exam"><td>Thu 13 Nov</td><td>13:15</td><td>1h 00m</td><td>🇫🇷 French</td><td>Writing</td><td>Light evening</td></tr>
+          <tr class="exam"><td>Fri 14 Nov</td><td>13:15</td><td>1h 45m</td><td>🧬 Biology</td><td>Higher Paper 1</td><td>30m Chem equations</td></tr>
+          <tr class="exam"><td>Tue 18 Nov</td><td>09:05</td><td>1h 45m</td><td>⚗️ Chemistry</td><td>Higher Paper 1</td><td>Lunch · 30m Maths P2 recap</td></tr>
+          <tr class="exam"><td>Tue 18 Nov</td><td>13:15</td><td>1h 30m</td><td>🧠 Maths</td><td>Paper 2</td><td>Rest</td></tr>
+          <tr class="exam"><td>Wed 19 Nov</td><td>09:05</td><td>1h 45m</td><td>🔭 Physics</td><td>Higher Paper 1</td><td>Snack · stretch</td></tr>
+          <tr class="exam"><td>Wed 19 Nov</td><td>13:15</td><td>1h 30m</td><td>🧠 Maths</td><td>Paper 3</td><td>Celebrate small win 🎉</td></tr>
+          <tr class="exam"><td>Fri 21 Nov</td><td>09:05</td><td>2h 00m</td><td>⚙️ DT</td><td>Mock Paper</td><td>Weekend off 🏆</td></tr>
+        </tbody>
+      </table>
+      <p class="helpers">Exam‑day rule: <b>no heavy study before 09:05 papers</b>. After afternoon papers, prioritise sleep and nutrition over extra work.</p>
+    </section>
+
+    <p class="helpers print-note">Printing: Use A4 landscape for best results. Checkboxes and edits won’t persist on paper (obviously) but are saved in your browser for digital use.</p>
+  </main>
+
+  <script>
+    // Persist checkbox state + edited labels/times in localStorage
+    const KEY = 'mockprep-v1';
+    const state = JSON.parse(localStorage.getItem(KEY) || '{}');
+
+    function serialise(){
+      const data = {};
+      document.querySelectorAll('.day').forEach(day=>{
+        const dayKey = day.getAttribute('data-day') || day.querySelector('.date')?.textContent?.trim();
+        const slots = [];
+        day.querySelectorAll('.slot').forEach(slot=>{
+          slots.push({
+            checked: slot.querySelector('input[type="checkbox"]').checked,
+            when: slot.querySelector('.when').textContent.trim(),
+            subject: slot.querySelector('.subject .s').textContent.trim()
+          });
+        });
+        data[dayKey] = slots;
+      });
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
+
+    function hydrate(){
+      if(!state) return;
+      document.querySelectorAll('.day').forEach(day=>{
+        const dayKey = day.getAttribute('data-day') || day.querySelector('.date')?.textContent?.trim();
+        const slots = state[dayKey] || [];
+        const nodes = day.querySelectorAll('.slot');
+        slots.forEach((s,i)=>{
+          const node = nodes[i]; if(!node) return;
+          node.querySelector('input[type="checkbox"]').checked = !!s.checked;
+          node.querySelector('.when').textContent = s.when || node.querySelector('.when').textContent;
+          node.querySelector('.subject .s').textContent = s.subject || node.querySelector('.subject .s').textContent;
+        });
+      });
+    }
+
+    document.addEventListener('change', e=>{
+      if(e.target.matches('input[type="checkbox"]')) serialise();
+    });
+    document.addEventListener('input', e=>{
+      if(e.target.closest('.slot')) serialise();
+    });
+
+    document.getElementById('save').addEventListener('click', serialise);
+    document.getElementById('clear').addEventListener('click', ()=>{
+      localStorage.removeItem(KEY); location.reload();
+    });
+
+    hydrate();
+      // --- Live countdown to first exam (RS, 10 Nov 2025 09:05 local) ---
+    (function(){
+      const target = new Date('2025-11-10T09:05:00');
+      const dd = document.getElementById('cd-days');
+      const hh = document.getElementById('cd-hours');
+      const mm = document.getElementById('cd-mins');
+      const ss = document.getElementById('cd-secs');
+      function pad(n){return String(Math.max(0,Math.floor(n))).padStart(2,'0')}
+      function tick(){
+        const now = new Date();
+        let diff = target - now;
+        if(diff < 0) diff = 0;
+        const days = Math.floor(diff/86400000);
+        const hours = Math.floor((diff%86400000)/3600000);
+        const mins = Math.floor((diff%3600000)/60000);
+        const secs = Math.floor((diff%60000)/1000);
+        if(dd){dd.textContent = days}
+        if(hh){hh.textContent = pad(hours)}
+        if(mm){mm.textContent = pad(mins)}
+        if(ss){ss.textContent = pad(secs)}
+      }
+      tick();
+      setInterval(tick,1000);
+    })();
+  </script>
+</body>
+</html>
