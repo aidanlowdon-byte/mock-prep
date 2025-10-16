@@ -70,6 +70,41 @@
   .slot .when{font-weight:600;color:#cfe1ff;width:92px;flex:0 0 92px}
   .subject{flex:1;min-width:0}
   .subject .s{display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 8px;border-radius:999px;border:1px solid #213046;vertical-align:middle}
+  .countdown{margin-top:10px;font-size:22px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+  .countdown .num{font-size:28px;padding:2px 8px;border-radius:8px;background:var(--panel);border:1px solid #243041;margin:0 3px}
+  .countdown .label{color:var(--muted);font-weight:500;margin-right:10px}
+
+  /* Subject chips fit nicely */
+  .slots{display:grid;gap:6px}
+  .slot{display:flex;gap:8px;align-items:center;background:#0c1219;border:1px dashed #223044;padding:8px;border-radius:10px;min-height:42px}
+  .slot .when{font-weight:600;color:#cfe1ff;width:92px;flex:0 0 92px}
+  .subject{flex:1;min-width:0}
+  .subject .s{display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 8px;border-radius:999px;border:1px solid #213046;vertical-align:middle}
+
+  /* Sticky header stronger */
+  header{position:sticky;top:0;z-index:1000;background:rgba(10,13,18,.86);backdrop-filter:blur(10px);border-bottom:1px solid #1e2632}
+
+  /* Notes modal */
+  .modal.hidden{display:none}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:2000}
+  .modal .card{width:min(680px,92vw);background:var(--panel);border:1px solid #243041;border-radius:14px;padding:16px}
+  .modal h3{margin:0 0 8px}
+  .modal textarea{width:100%;min-height:220px;padding:10px;border-radius:10px;background:#0f141c;color:var(--text);border:1px solid #2a3a4f;resize:vertical}
+  .modal .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+  .note-chip{cursor:pointer}
+  .note-pill{margin-left:8px;font-size:12px;opacity:.8;background:#0f141c;border:1px solid #243041;padding:2px 6px;border-radius:999px}
+  .note-chip.has-note{box-shadow:0 0 0 1px var(--ok) inset}
+
+  /* Mobile-friendly tweaks */
+  @media (max-width: 720px){
+    .wrap{padding:12px}
+    h1{font-size:22px}
+    .controls{gap:6px;overflow-x:auto;padding-bottom:6px}
+    .tag{padding:6px 8px}
+    .legend{gap:6px}
+    .grid{grid-template-columns:1fr}
+    .slot .when{width:86px;flex:0 0 86px;font-size:13px}
+  }
 </style>
 </head>
 <body>
@@ -91,19 +126,32 @@
         <span class="num" id="cd-secs">00</span>s
       </div>
       <div class="legend">
-        <span class="tag"><span class="dot" style="background:var(--subject-bio)"></span>🧬 Biology</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-bus)"></span>💼 Business</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-chem)"></span>⚗️ Chemistry</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-cs)"></span>💻 Computer Sci</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-dt)"></span>⚙️ DT</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-eng)"></span>✍️ Eng Lang</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-fr)"></span>🇫🇷 French</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-maths)"></span>🧠 Maths</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-phys)"></span>🔭 Physics</span>
-        <span class="tag"><span class="dot" style="background:var(--subject-rs)"></span>☯️ RS</span>
+        <button type="button" class="tag note-chip" data-subject="bio" title="Click for notes"><span class="dot" style="background:var(--subject-bio)"></span>🧬 Biology <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="bus" title="Click for notes"><span class="dot" style="background:var(--subject-bus)"></span>💼 Business <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="chem" title="Click for notes"><span class="dot" style="background:var(--subject-chem)"></span>⚗️ Chemistry <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="cs" title="Click for notes"><span class="dot" style="background:var(--subject-cs)"></span>💻 Computer Sci <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="dt" title="Click for notes"><span class="dot" style="background:var(--subject-dt)"></span>⚙️ DT <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="eng" title="Click for notes"><span class="dot" style="background:var(--subject-eng)"></span>✍️ Eng Lang <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="fr" title="Click for notes"><span class="dot" style="background:var(--subject-fr)"></span>🇫🇷 French <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="maths" title="Click for notes"><span class="dot" style="background:var(--subject-maths)"></span>🧠 Maths <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="phys" title="Click for notes"><span class="dot" style="background:var(--subject-phys)"></span>🔭 Physics <span class="note-pill">Notes</span></button>
+        <button type="button" class="tag note-chip" data-subject="rs" title="Click for notes"><span class="dot" style="background:var(--subject-rs)"></span>☯️ RS <span class="note-pill">Notes</span></button>
       </div>
     </div>
   </header>
+  <!-- Notes Modal -->
+  <div id="note-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="note-title">
+    <div class="card">
+      <h3 id="note-title">Subject notes</h3>
+      <div id="note-subject" class="muted" style="margin-bottom:8px"></div>
+      <textarea id="note-text" placeholder="Write formulas, essay plans, vocab lists…"></textarea>
+      <div class="row">
+        <button id="note-delete">🗑️ Delete</button>
+        <button id="note-close">Cancel</button>
+        <button id="note-save">💾 Save</button>
+      </div>
+    </div>
+  </div>
 
   <main class="wrap">
     <p class="helpers">Each day targets ≈ <b>3 hours</b> total. Suggested slots: <span class="quote-inline">15:45–16:45</span>, <span class="quote-inline">17:00–18:00</span>, <span class="quote-inline">18:15–19:15</span>. Adjust to suit. Tick as you complete; progress is saved locally on your device.</p>
@@ -396,6 +444,54 @@
       }
       tick();
       setInterval(tick,1000);
+    })();
+
+    // --- Subject Notes (per-subject, saved to localStorage) ---
+    (function(){
+      const KEY_PREFIX = 'note-';
+      const chips = document.querySelectorAll('.note-chip');
+      const modal = document.getElementById('note-modal');
+      const txt = document.getElementById('note-text');
+      const title = document.getElementById('note-title');
+      const label = document.getElementById('note-subject');
+      const saveBtn = document.getElementById('note-save');
+      const closeBtn = document.getElementById('note-close');
+      const delBtn = document.getElementById('note-delete');
+      let currentId = null, currentName = '';
+
+      function open(id, name){
+        currentId = id; currentName = name;
+        title.textContent = 'Notes — ' + name;
+        label.textContent = 'All changes are saved on this device.';
+        txt.value = localStorage.getItem(KEY_PREFIX+id) || '';
+        modal.classList.remove('hidden');
+        txt.focus();
+      }
+      function close(){ modal.classList.add('hidden'); currentId=null; }
+      function save(){ if(currentId){ localStorage.setItem(KEY_PREFIX+currentId, txt.value); mark(); close(); } }
+      function del(){ if(currentId){ localStorage.removeItem(KEY_PREFIX+currentId); txt.value=''; mark(); close(); } }
+      function mark(){
+        chips.forEach(ch=>{
+          const id = ch.getAttribute('data-subject');
+          const has = !!localStorage.getItem(KEY_PREFIX+id);
+          ch.classList.toggle('has-note', has);
+        });
+      }
+
+      chips.forEach(ch=>{
+        ch.addEventListener('click', ()=>{
+          const id = ch.getAttribute('data-subject');
+          const name = ch.textContent.replace('Notes','').trim();
+          open(id, name);
+        });
+      });
+      saveBtn.addEventListener('click', save);
+      closeBtn.addEventListener('click', close);
+      delBtn.addEventListener('click', del);
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) close(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
+
+      mark();
     })();
   </script>
 </body>
