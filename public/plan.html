@@ -462,6 +462,37 @@
   const notesState = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
 
   // Hydrate values and mark chips with existing notes
+  // --- Correct weekday labels from data-day (avoid off-by-one mistakes) ---
+(function () {
+  const dFmtShort = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' });
+  const dFmtShortMon = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+
+  // 1) Fix each card's .date text
+  document.querySelectorAll('.day').forEach(day => {
+    const iso = day.getAttribute('data-day');
+    const el = day.querySelector('.date');
+    if (!iso || !el) return;
+    // Use midday to dodge DST edge cases
+    const d = new Date(iso + 'T12:00:00');
+    // Keep month if the original label had one, else omit (to match your later weeks)
+    const hadMonth = /\bJan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec\b/.test(el.textContent);
+    el.textContent = (hadMonth ? dFmtShortMon : dFmtShort).format(d);
+  });
+
+  // 2) Fix the week headings' parenthetical ranges, e.g. "(Thu 17 – Sun 20 Oct)"
+  document.querySelectorAll('.week').forEach(week => {
+    const days = week.querySelectorAll('.day');
+    const h2 = week.querySelector('h2');
+    if (!h2 || days.length === 0) return;
+
+    const first = new Date(days[0].getAttribute('data-day') + 'T12:00:00');
+    const last  = new Date(days[days.length - 1].getAttribute('data-day') + 'T12:00:00');
+
+    const startLabel = dFmtShort.format(first);
+    const endLabel   = dFmtShortMon.format(last); // include month on the end
+    h2.innerHTML = h2.textContent.replace(/\(.*\)/, `(${startLabel} – ${endLabel})`);
+  });
+})();
   document.querySelectorAll('.notes').forEach(panel=>{
     const id = panel.id.replace('notes-','');
     const ta = panel.querySelector('textarea');
